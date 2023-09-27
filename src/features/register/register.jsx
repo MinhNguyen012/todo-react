@@ -1,42 +1,56 @@
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input,notification } from 'antd';
 import '../../css/login.css'
 import React, { useEffect, useState } from 'react';
 import {Controller, useForm } from 'react-hook-form';
 import { login } from '../../service/loginService';
 import { useNavigate } from 'react-router-dom';
+import { register } from '../../service/register';
 
-function Login(props) {
+function Register(props) {
     const navigate = useNavigate();
+    const [error,setError] = useState();
+
+    const [api, contextHolder] = notification.useNotification();
+    const openNotificationWithIcon = (type,message) => {
+        api[type]({
+        message: 'Error',
+        description:
+            message
+        });
+    };
 
     const onFinish = async(values) => {
         const email = values['email']
         const password = values['password']
+        const name = values['name']
         
-        const result = await getDataLogin({
+        const result = await register({
             'email' : email,
             'password' : password,
+            'name' : name
             })
+            console.log(result)
+        if(result.status == 200) {
+            navigate('/')
+        }else {
+            openNotificationWithIcon('error',result.message)
+        }
     };
 
-    const getDataLogin = async(data) => {
-        const dataLogin = await(login(data))
-
-        if(dataLogin['status'] === 200){
-          localStorage.setItem ('token', dataLogin['jwt']);
-            navigate('/todo')
-        }
+    
+    const onFinishFailed = (errorInfo) => {
+    console.log('Failed:', errorInfo);
+    };
+    const redirectLogin = () => {
+        navigate('/')
     }
+    
 
-const onFinishFailed = (errorInfo) => {
-  console.log('Failed:', errorInfo);
-};
-
- const registerPage = () => {
-  navigate('/register')
- }
   
     return (
       <div className='form-login'>
+              {contextHolder}
+
             <Form
                 name="basic"
                 labelCol={{
@@ -56,6 +70,19 @@ const onFinishFailed = (errorInfo) => {
                 autoComplete="off"
             >
                 <Form.Item
+                    label="Name"
+                    name="name"
+                    rules={[
+                        {
+                        required: true,
+                        message: 'Please input your name!',
+                        },
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
+        
+                <Form.Item
                 label="email"
                 name="email"
                 rules={[
@@ -67,7 +94,7 @@ const onFinishFailed = (errorInfo) => {
                 >
                 <Input />
             </Form.Item>
-        
+
             <Form.Item
               label="Password"
               name="password"
@@ -88,10 +115,10 @@ const onFinishFailed = (errorInfo) => {
               }}
             >
               <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
-              <Button type="primary" style={{marginLeft:'15px'}} onClick={registerPage}>
                 Register
+              </Button>
+              <Button type="primary" style={{marginLeft:"15px"}} onClick={redirectLogin}>
+                Login
               </Button>
             </Form.Item>
           </Form>
@@ -100,4 +127,4 @@ const onFinishFailed = (errorInfo) => {
     )
 }
 
-export default Login;
+export default Register;

@@ -5,6 +5,7 @@ import './App.css'
 import List from './features/todo/list'
 import Login from './features/login/login'
 import { Route, Routes } from 'react-router-dom'
+import Register from './features/register/register'
 
 function App() {
 
@@ -14,6 +15,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Login/>}/>
         <Route path='/todo' element={<List/>} />
+        <Route path='/register' element= {<Register/>} />
       </Routes>
     </>
   )

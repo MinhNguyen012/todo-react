@@ -3,12 +3,12 @@ import '../../css/login.css'
 import React, { useEffect, useState } from 'react';
 import {Controller, useForm } from 'react-hook-form';
 import { login } from '../../service/loginService';
+import { useNavigate } from 'react-router-dom';
 
 function Login(props) {
-    const [data,setData] = useState([]);
+    const navigate = useNavigate();
 
     const onFinish = async(values) => {
-        setData(values)
         const email = values['email']
         const password = values['password']
         
@@ -20,18 +20,19 @@ function Login(props) {
 
     const getDataLogin = async(data) => {
         const dataLogin = await(login(data))
-        console.log(dataLogin)
+        
+        if(dataLogin['status'] === 200){
+          localStorage.setItem ('token', dataLogin['jwt']);
+            navigate('/todo')
+        }
     }
 
-    useEffect(() => {
-        console.log(data)
-
-    }, [data]);
 const onFinishFailed = (errorInfo) => {
   console.log('Failed:', errorInfo);
 };
   
     return (
+      <div className='form-login'>
             <Form
                 name="basic"
                 labelCol={{
@@ -87,6 +88,7 @@ const onFinishFailed = (errorInfo) => {
               </Button>
             </Form.Item>
           </Form>
+          </div>
     
     )
 }

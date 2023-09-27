@@ -4,12 +4,17 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import List from './features/todo/list'
 import Login from './features/login/login'
+import { Route, Routes } from 'react-router-dom'
 
 function App() {
 
   return (
     <>
-      <Login/>
+
+      <Routes>
+        <Route path='/' element={<Login/>}/>
+        <Route path='/todo' element={<List/>} />
+      </Routes>
     </>
   )
 }
